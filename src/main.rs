@@ -18,9 +18,21 @@ fn main() -> io::Result<()> {
                 eprintln!("Ignoring packet: {:?}", e);
             },
             Ok(p) => {
-                let src = p.source();
+                let src = p.source_addr();
                 let dst = p.destination_addr();
                 let proto = p.protocol();
+
+                if proto.0 != 0x86 {
+                    //not TCP 
+                    continue;
+                }
+
+                match etherparse::TcpHeaderSlice::from_slice(&buf[4 + p.slice().len()..]) {
+                    Err(e) => println!("Ignoring TCP packet {:?}", e),
+                    Ok(p) => {
+                        println!("{:?} -> {} {:?}b of TCP to port {:?}", src, dst, p.slice().len(), p.destination_port());
+                    }
+                }
                 println!("{:?} -> {} {:?}b of protocol {:?}", src, dst, p.payload_len(), proto);
             }
         }
