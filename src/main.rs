@@ -22,7 +22,7 @@ fn main() -> io::Result<()> {
                 let dst = p.destination_addr();
                 let proto = p.protocol();
 
-                if proto.0 != 0x86 {
+                if proto.0 != 0x06 {
                     //not TCP 
                     continue;
                 }
