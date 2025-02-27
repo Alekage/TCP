@@ -45,15 +45,7 @@ fn main() -> io::Result<()> {
 
                         let datai = 4 + iph.slice().len() + tcph.slice().len();
 
-                        connections.entry(quad).or_default().on_packet(iph, tcph, &buf[datai..]);
-
-                        println!(
-                            "{:?} -> {} {:?}b of TCP to port {:?}",
-                            src,
-                            dst,
-                            tcph.slice().len(),
-                            tcph.destination_port()
-                        );
+                        connections.entry(quad).or_default().on_packet(iph, tcph, &buf[datai..nbytes]);
                     }
                 }
             }
