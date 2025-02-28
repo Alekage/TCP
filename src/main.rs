@@ -45,7 +45,11 @@ fn main() -> io::Result<()> {
 
                         let datai = 4 + iph.slice().len() + tcph.slice().len();
 
-                        connections.entry(quad).or_default().on_packet(iph, tcph, &buf[datai..nbytes]);
+                        connections.entry(quad).or_default().on_packet(
+                            iph,
+                            tcph,
+                            &buf[datai..nbytes],
+                        );
                     }
                 }
             }
