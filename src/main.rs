@@ -1,6 +1,8 @@
 use std::net::Ipv4Addr;
 use std::{collections::HashMap, io};
 
+use tcp::State;
+
 mod tcp;
 
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
@@ -10,8 +12,8 @@ struct Quad {
 }
 
 fn main() -> io::Result<()> {
-    let mut connections: HashMap<Quad, tcp::State> = Default::default();
-    let nic = tun_tap::Iface::new("tun0", tun_tap::Mode::Tun)?;
+    let mut connections: HashMap<Quad, tcp::Connection> = Default::default();
+    let mut nic = tun_tap::Iface::new("tun0", tun_tap::Mode::Tun)?;
     let mut buf = [0u8; 1504];
 
     loop {
@@ -46,10 +48,11 @@ fn main() -> io::Result<()> {
                         let datai = 4 + iph.slice().len() + tcph.slice().len();
 
                         connections.entry(quad).or_default().on_packet(
+                            &mut nic,
                             iph,
                             tcph,
                             &buf[datai..nbytes],
-                        );
+                        )?;
                     }
                 }
             }
