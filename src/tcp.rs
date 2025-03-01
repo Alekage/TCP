@@ -13,6 +13,61 @@ pub struct Connection {
     state: State
 }
 
+// Send Sequence Space
+
+// 1         2          3          4
+// ----------|----------|----------|----------
+//   SND.UNA    SND.NXT    SND.UNA
+//                        +SND.WND
+
+// 1 - old sequence numbers which have been acknowledged
+// 2 - sequence numbers of unacknowledged data
+// 3 - sequence numbers allowed for new data transmission
+// 4 - future sequence numbers which are not yet allowed
+
+//        Send Sequence Space
+
+struct SendSequenceSpace {
+    /// send acknowledgement
+    una: usize,
+    /// send next
+    nxt: usize,
+    /// send window
+    wnd: usize,
+    /// send urgent pointer
+    up: bool,
+    /// segment sequence number used for last window update
+    wl1: usize,
+    /// segment acknowledge number used for last window update
+    wl2: usize,
+    /// initial send sequence nunber
+    iss: usize
+}
+
+// Receive Sequence Space
+
+//                        1          2          3
+//                    ----------|----------|----------
+//                           RCV.NXT    RCV.NXT
+//                                     +RCV.WND
+
+//         1 - old sequence numbers which have been acknowledged
+//         2 - sequence numbers allowed for new reception
+//         3 - future sequence numbers which are not yet allowed
+
+//                          Receive Sequence Space
+
+struct RecvSequenceSpace {
+    // receive next
+    nxt: usize,
+    /// receive window
+    wnd: usize,
+    /// receive urgent pointer
+    up: bool,
+    /// initial receive sequence number
+    irs: usize,
+}
+
 impl State {
     pub fn on_packet(
         &mut self,
